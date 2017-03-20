@@ -1,0 +1,44 @@
+Sub CreateConnectivityFlownex()
+
+
+Worksheets("MODELE (connectivity_1)").Activate 'test sur une feuille
+
+Dim nbComp As Integer
+nbComp = 5 'valeur connue après exécution macro C#(à convertir en vba)
+
+Dim compID As String
+Dim nodeID As String
+Dim count As Integer
+Dim lineCount As Integer
+
+nodeID = Cells(2, 4).Value 'ID du noeud à l'arm 2
+
+
+Cells(nbComp + 3, 1).Value = "LINKS"
+Cells(nbComp + 4, 1).Value = "SOURCE"
+Cells(nbComp + 4, 2).Value = "TARGET"
+
+count = 0
+For i = 1 To nbComp
+
+    lineCount = nbComp + 4 + i + count
+    
+    If IsEmpty(Cells(1 + i, 4)) Then
+        'MsgBox ("composant à 1 branche")
+        Cells(lineCount, 1).Value = Cells(1 + i, 3).Value
+        Cells(lineCount, 2).Value = Cells(1 + i, 1).Value
+    Else
+        'MsgBox ("composant à 2 branches")
+        Cells(lineCount, 1).Value = Cells(1 + i, 3).Value
+        Cells(lineCount, 2).Value = Cells(1 + i, 1).Value
+        
+        Cells(lineCount + 1, 1).Value = Cells(1 + i, 1).Value
+        Cells(lineCount + 1, 2).Value = Cells(1 + i, 3).Value
+        
+        count = count + 1
+    End If
+
+Next
+
+End Sub
+
