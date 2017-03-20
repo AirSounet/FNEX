@@ -1,0 +1,33 @@
+Sub CreateComponents()
+
+Dim compName As String
+compName = "Source: Pressure"
+
+MsgBox (CheckComponent(compName))
+
+
+End Sub
+
+
+'DO NOT FORGET TO ADD THE "MICROSOFT SCRIPTING RUNTIME" REFERENCE
+
+
+Function CheckComponent(FMcompName As String) As String
+
+Dim dict As New Scripting.Dictionary
+
+dict.Add Key:="Source: Pressure", Item:="Flownex.Components.BoundaryCondition"
+dict.Add Key:="Source: Flow", Item:="Flownex.Components.BoundaryCondition"
+dict.Add Key:="Pipe: Cylindrical Rigid", Item:="Flownex.Components.Pipe"
+
+If dict.Exists(FMcompName) Then
+    'MsgBox FMcompName & " exists and has value " & dict(FMcompName)
+    CheckComponent = dict(FMcompName)
+Else
+    MsgBox FMcompName & " does not exist."
+End If
+    
+    
+Set dict = Nothing
+
+End Function
