@@ -1,0 +1,101 @@
+// Flowmaster external code stub for Macros
+using System;
+using System.Collections;
+using Flowmaster.Interfaces;
+using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel; 
+
+// Optional: Add extra 'using' directives as required
+
+namespace Flowmaster.External
+{
+	public class ExternalCode
+	{
+		int nResultNo;		       
+
+		//The definition for method Macro should not be changed
+		public void Macro( IFM_Application Application, IFM_Database Database, IFM_Project Project, IFM_Network Network, IFM_ResultSet ResultSet )
+		{	 			
+					IFM_Project proj;
+					IFM_Network net;
+					IFM_Component comp;
+					string name;
+					proj = Application.Project("Flowmaster");
+					net = proj.Network("connectivity_1");
+					comp = net.Component(1);
+					name = comp.CustomName;
+			
+					// Number of components in the network
+					int comp_count = net.ComponentIDs.Count;
+					//MessageBox.Show("Le réseau contient " + comp_count.ToString() + " composants.");
+					
+					/**************** GENERATION D'UN CLASSEUR EXCEL**************/
+					Excel.Application xlapp;
+					Excel.Workbook xlwb;
+					Excel.Worksheet xlws ;
+            		object misValue = System.Reflection.Missing.Value; //valeur par défaut
+					xlapp = new Excel.Application();
+					
+					xlwb = xlapp.Workbooks.Add(misValue); // création de 3 feuilles vierges automatiquement
+					
+			
+					//CREATION DE FEUILLES SUPPLEMENTAIRES SI BESOIN
+					if(proj.NetworkNames.Count > 3)
+						xlwb.Worksheets.Add(misValue, misValue,proj.NetworkNames.Count - 3,misValue);
+					
+					
+					for(int c = 0 ; c < proj.NetworkNames.Count ; c++) //proj.NetworkNames.Count
+					{						
+						xlws = (Excel.Worksheet)xlwb.Worksheets.get_Item(c+1);
+						xlws.Name = (string)proj.NetworkNames[c];
+			
+						// MISE EN FORME
+						xlws.Cells[1, 1] = "compID";
+						xlws.Cells[1, 2] = "Name";
+						xlws.Cells[1, 3] = "Arm1";
+						xlws.Cells[1, 4] = "Arm2";
+						xlws.Cells[1, 5] = "Arm3";
+							
+						// ECRITURE DES CONNECTIVITES
+						int nodeID;			
+						ArrayList compIDs = new ArrayList(); // création d'une instance de classe Array
+						net = proj.Network(proj.NetworkNames[c].ToString()); // sélection du réseau via son nom 
+						compIDs = net.ComponentIDs;
+						
+						short armNo = 1; // 0 correspond à Arm1 et 1 correspond à Arm2
+						bool node_found = false; // déclaration + initialisation
+				
+						//POUR DEBUG ERREUR : "REF D'OBJET NON DEFINIE A UNE INSTANCE D'OBJET"
+						//MessageBox.Show((string)proj.NetworkNames[c] + " nbComp = " + compIDs.Count);
+						
+						for (int i = 0 ; i < compIDs.Count ; i++)
+							{
+								xlws.Cells[i+2,1] = "C" + (i+1);
+								xlws.Cells[i+2,2] = net.Component(i+1).CustomName;
+								
+								for (short j = 0 ; j < 3 ; j++)		
+								{
+								node_found = net.ComponentAttachedNode(i+1,j,out nodeID);
+								//MessageBox.Show("Le noeud " + nodeID.ToString() + " correspond à l'arm" + (armNo+1).ToString() + " du composant " + (i+1).ToString());
+									if(node_found)
+									{
+										xlws.Cells[i+2,3+j] = "N" + nodeID;
+									}
+								}
+							}
+							
+						//ECRITURE DE LA CONNECTIVITE SOUS FORMAT FLOWNEX
+							xlws.Cells[1, 10] = "Source";
+							xlws.Cells[1, 11] = "Target";
+						
+							
+					} // fin de boucle for (parcours des feuilles(réseaux FM) du classeur Excel)
+					
+					// SAUVEGARDE ET FERMETURE D'EXCEL
+					xlwb.SaveAs("C:\\Users\\administrateur\\Desktop\\connectivity.xls");
+					xlwb.Close(true,misValue,misValue);
+					xlapp.Quit();
+					
+		}
+	}
+}
