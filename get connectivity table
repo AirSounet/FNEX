@@ -63,19 +63,22 @@ namespace Flowmaster.External
 						compIDs = net.ComponentIDs;
 						
 						short armNo = 1; // 0 correspond à Arm1 et 1 correspond à Arm2
-						bool node_found = false; // déclaration + initialisation
+						bool node_found = false; // déclaration + initialisation 
 				
 						//POUR DEBUG ERREUR : "REF D'OBJET NON DEFINIE A UNE INSTANCE D'OBJET"
-						//MessageBox.Show((string)proj.NetworkNames[c] + " nbComp = " + compIDs.Count);
+						MessageBox.Show((string)proj.NetworkNames[c] + " nbComp = " + compIDs.Count);
 						
 						for (int i = 0 ; i < compIDs.Count ; i++)
 							{
-								xlws.Cells[i+2,1] = "C" + (i+1);
-								xlws.Cells[i+2,2] = net.Component(i+1).CustomName;
+								int compID = int.Parse(compIDs[i].ToString()); // conversion du type string vers int
+								xlws.Cells[i+2,1] = "C" + compID;
+								//MessageBox.Show(net.Component(compID).CustomName); // debug
+								//MessageBox.Show(compID.ToString()); //debug 
+								xlws.Cells[i+2,2] = net.Component(compID).CustomName;
 								
 								for (short j = 0 ; j < 3 ; j++)		
 								{
-								node_found = net.ComponentAttachedNode(i+1,j,out nodeID);
+								node_found = net.ComponentAttachedNode(compID,j,out nodeID);
 								//MessageBox.Show("Le noeud " + nodeID.ToString() + " correspond à l'arm" + (armNo+1).ToString() + " du composant " + (i+1).ToString());
 									if(node_found)
 									{
@@ -85,8 +88,8 @@ namespace Flowmaster.External
 							}
 							
 						//ECRITURE DE LA CONNECTIVITE SOUS FORMAT FLOWNEX
-							xlws.Cells[1, 10] = "Source";
-							xlws.Cells[1, 11] = "Target";
+							//xlws.Cells[1, 10] = "Source";
+							//xlws.Cells[1, 11] = "Target";
 						
 							
 					} // fin de boucle for (parcours des feuilles(réseaux FM) du classeur Excel)
