@@ -1,3 +1,5 @@
+'****DO NOT FORGET TO ADD THE "MICROSOFT SCRIPTING RUNTIME" REFERENCE
+
 Sub CreateComponents()
 
 Dim compName As String
@@ -9,16 +11,123 @@ MsgBox (CheckComponent(compName))
 End Sub
 
 
-'DO NOT FORGET TO ADD THE "MICROSOFT SCRIPTING RUNTIME" REFERENCE
-
-
 Function CheckComponent(FMcompName As String) As String
 
 Dim dict As New Scripting.Dictionary
 
+'BOUNDARY CONDITIONS
 dict.Add Key:="Source: Pressure", Item:="Flownex.Components.BoundaryCondition"
 dict.Add Key:="Source: Flow", Item:="Flownex.Components.BoundaryCondition"
+dict.Add Key:="Source: Pressure v Flow", Item:="Flownex.Components.BoundaryCondition"
+dict.Add Key:="Source: Blank End (Zero Flow)", Item:="Flownex.Components.BoundaryCondition"
+
+'PIPES
 dict.Add Key:="Pipe: Cylindrical Rigid", Item:="Flownex.Components.Pipe"
+dict.Add Key:="Pipe: Cylindrical Elastic", Item:="Flownex.Components.Pipe"
+dict.Add Key:="Pipe: Cylindrical Bubbly", Item:="Flownex.Components.Pipe"
+dict.Add Key:="Pipe: Cylindrical Compliant", Item:="Flownex.Components.Pipe"
+dict.Add Key:="Pipe: Cylindrical Compliant Gas", Item:="Flownex.Components.Pipe"
+dict.Add Key:="Pipe: Cylindrical Elastic Gas", Item:="Flownex.Components.Pipe"
+dict.Add Key:="Pipe: Cylindrical Gas", Item:="Flownex.Components.Pipe"
+dict.Add Key:="Pipe: Compressible Rigid", Item:="Flownex.Components.Pipe"
+dict.Add Key:="Hose: Flexible", Item:="Flownex.Components.Pipe"
+
+'VALVES
+dict.Add Key:="Cd Valve", Item:="Flownex.Components."
+dict.Add Key:="Valve: ""Y""", Item:="Flownex.Components."
+dict.Add Key:="Valve: Angle", Item:="Flownex.Components."
+dict.Add Key:="Valve: Ball", Item:="Flownex.Components."
+dict.Add Key:="Valve: Butterfly (Blakeborough)", Item:="Flownex.Components."
+dict.Add Key:="Valve: Butterfly (Type A)", Item:="Flownex.Components."
+dict.Add Key:="Valve: Butterfly (Type B)", Item:="Flownex.Components."
+dict.Add Key:="Valve: Butterfly (Type C)", Item:="Flownex.Components."
+dict.Add Key:="Valve: Diaphragm (Full Bore)", Item:="Flownex.Components."
+dict.Add Key:="Valve: Diaphragm (Reduced Bore)", Item:="Flownex.Components."
+dict.Add Key:="Valve: Gate (Seat Area = Pipe Area)", Item:="Flownex.Components."
+dict.Add Key:="Valve: Globe", Item:="Flownex.Components."
+dict.Add Key:="Valve: Sluice (Seat Area", Item:="Flownex.Components."
+
+'BENDS
+dict.Add Key:="Bend: Circular", Item:="Flownex.Components."
+dict.Add Key:="Bend: Circular Composite Mitre", Item:="Flownex.Components."
+dict.Add Key:="Bend: Circular Mitre", Item:="Flownex.Components."
+dict.Add Key:="Bend: Rectangular (Aspect Ratio 0.5)", Item:="Flownex.Components."
+dict.Add Key:="Bend: Rectangular (Aspect Ratio 1.0)", Item:="Flownex.Components."
+dict.Add Key:="Bend: Rectangular (Aspect Ratio 2.0)", Item:="Flownex.Components."
+dict.Add Key:="Bend: Rectangular Composite Mitre", Item:="Flownex.Components."
+dict.Add Key:="Bend: Rectangular Mitre", Item:="Flownex.Components."
+
+'DIAPHRAGM
+dict.Add Key:="Diaphragm: Bursting Disc", Item:="Flownex.Components."
+
+'ORIFICES
+dict.Add Key:="Orifice: Long", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Long: Compressible", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Long: Pall 8700 Filter", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Radiussed", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Sharp-edged (Conical)", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Sharp-edged (Standard Orifice Plate)", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Short: Compressible", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Short: Fixed Throttle (60 L/min at 50 bar)", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Square", Item:="Flownex.Components."
+
+'JUNCTIONS
+dict.Add Key:="Junction: T (30°)", Item:="Flownex.Components."
+dict.Add Key:="Junction: T (45°)", Item:="Flownex.Components."
+dict.Add Key:="Junction: T (60°)", Item:="Flownex.Components."
+dict.Add Key:="Junction: T (90°)", Item:="Flownex.Components."
+dict.Add Key:="Junction: Y (A1 + A2 = A3)", Item:="Flownex.Components."
+dict.Add Key:="Junction: Y (A1 = A2 = A3)", Item:="Flownex.Components."
+
+
+'PUMPS
+dict.Add Key:="Jet Pump", Item:="Flownex.Components."
+dict.Add Key:="Pump: Axial Flow", Item:="Flownex.Components."
+dict.Add Key:="Pump: Gear (Fixed Displacement & Variable Speed)", Item:="Flownex.Components."
+dict.Add Key:="Pump: Mixed Flow", Item:="Flownex.Components."
+dict.Add Key:="Pump: Piston (Variable Displacement & Speed)", Item:="Flownex.Components."
+dict.Add Key:="Pump: Positive Displacement - Data-based", Item:="Flownex.Components."
+dict.Add Key:="Pump: Radial Flow", Item:="Flownex.Components."
+dict.Add Key:="Pump: Surface Data", Item:="Flownex.Components."
+
+'TRANSITIONS
+dict.Add Key:="Transition: Abrupt", Item:="Flownex.Components."
+dict.Add Key:="Transition: Gradual", Item:="Flownex.Components."
+
+'LOSSES
+dict.Add Key:="Loss: Discrete", Item:="Flownex.Components."
+dict.Add Key:="Cd Discrete Loss", Item:="Flownex.Components."
+
+'HEAT EXCHANGERS
+dict.Add Key:="Heat-Exchanger: Heater-Cooler", Item:="Flownex.Components."
+dict.Add Key:="Heat-Exchanger: CW Condenser", Item:="Flownex.Components."
+dict.Add Key:="Heat-Exchanger: Radiator", Item:="Flownex.Components."
+dict.Add Key:="Heat-Exchanger: Thermal", Item:="Flownex.Components."
+dict.Add Key:="Heat-Exchanger: Coaxial", Item:="Flownex.Components."
+dict.Add Key:="Heat-Exchanger: Cross Flow", Item:="Flownex.Components."
+
+'RESERVOIRS
+dict.Add Key:="Fuel Tank: Multi Arm", Item:="Flownex.Components."
+dict.Add Key:="Fuel Tank: 12 Arm", Item:="Flownex.Components."
+dict.Add Key:="Fuel Tank: 5 Arm", Item:="Flownex.Components."
+dict.Add Key:="Fuel Tank: 4 Arm", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: Blowdown Tank", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: 2-arm", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: 3-arm", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: Constant Head", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: Expansion Tank or Degas Bottle", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: Finite Area", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: Infinite Area", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: Variable Head", Item:="Flownex.Components."
+
+'ACCUMULATOR
+dict.Add Key:="Accumulator: Air Vessel", Item:="Flownex.Components."
+dict.Add Key:="Accumulator: Bladder - Fixed Geometry", Item:="Flownex.Components."
+dict.Add Key:="Accumulator: Bladder - Variable Geometry", Item:="Flownex.Components."
+dict.Add Key:="Accumulator: Vented Air Vessel", Item:="Flownex.Components."
+dict.Add Key:="Accumulator: Gas", Item:="Flownex.Components."
+dict.Add Key:="Fixed Volume", Item:="Flownex.Components."
+
 
 If dict.Exists(FMcompName) Then
     'MsgBox FMcompName & " exists and has value " & dict(FMcompName)
