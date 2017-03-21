@@ -1,15 +1,54 @@
 '****DO NOT FORGET TO ADD THE "MICROSOFT SCRIPTING RUNTIME" REFERENCE
 
-Sub CreateComponents()
+Sub CreateComponent()
 
 Dim compName As String
 compName = "Source: Pressure"
+'MsgBox (CheckComponent(compName))
 
-MsgBox (CheckComponent(compName))
+Dim compFilePath As String
+Dim nodeFilePath As String
 
+
+compFilePath = "C:\Users\administrateur\Desktop\Cmp_connectivity.csv"
+nodeFilePath = "C:\Users\administrateur\Desktop\Nodes_connectivity.csv"
+
+
+Call ExtractPositions(compFilePath) 'Extract (x,y) components coordinates
+Call ExtractPositions(nodeFilePath) 'Extract (x,y) nodes coordinates
 
 End Sub
 
+
+Sub ExtractPositions(filePathToExtract)
+
+'OPEN CSV FILE CONTAINING (X,Y) COMPONENTS/NODES' COORDINATES
+
+Dim row_number As Integer
+Dim sheetName As String
+
+subName = Split(filePathToExtract, "\")
+sheetName = Left(subName(4), 1) + "_Positions"
+
+Open filePathToExtract For Input As #1
+
+row_number = 0
+Sheets.Add.Name = sheetName
+Worksheets(sheetName).Range("A1").Activate
+
+Do Until EOF(1)
+    Line Input #1, LineFromFile
+    LineItems = Split(LineFromFile, ",")
+ 
+    ActiveCell.Offset(row_number, 0).Value = LineItems(0)
+    ActiveCell.Offset(row_number, 1).Value = LineItems(1)
+    ActiveCell.Offset(row_number, 2).Value = LineItems(2)
+    
+    row_number = row_number + 1
+Loop
+Close #1
+
+End Sub
 
 Function CheckComponent(FMcompName As String) As String
 
