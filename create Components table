@@ -33,70 +33,73 @@ dict.Add Key:="Pipe: Compressible Rigid", Item:="Flownex.Components.Pipe"
 dict.Add Key:="Hose: Flexible", Item:="Flownex.Components.Pipe"
 
 'VALVES
-dict.Add Key:="Cd Valve", Item:="Flownex.Components."
-dict.Add Key:="Valve: ""Y""", Item:="Flownex.Components."
-dict.Add Key:="Valve: Angle", Item:="Flownex.Components."
-dict.Add Key:="Valve: Ball", Item:="Flownex.Components."
-dict.Add Key:="Valve: Butterfly (Blakeborough)", Item:="Flownex.Components."
-dict.Add Key:="Valve: Butterfly (Type A)", Item:="Flownex.Components."
-dict.Add Key:="Valve: Butterfly (Type B)", Item:="Flownex.Components."
-dict.Add Key:="Valve: Butterfly (Type C)", Item:="Flownex.Components."
-dict.Add Key:="Valve: Diaphragm (Full Bore)", Item:="Flownex.Components."
-dict.Add Key:="Valve: Diaphragm (Reduced Bore)", Item:="Flownex.Components."
-dict.Add Key:="Valve: Gate (Seat Area = Pipe Area)", Item:="Flownex.Components."
-dict.Add Key:="Valve: Globe", Item:="Flownex.Components."
-dict.Add Key:="Valve: Sluice (Seat Area", Item:="Flownex.Components."
+dict.Add Key:="Cd Valve", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: ""Y""", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Angle", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Ball", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Butterfly (Blakeborough)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Butterfly (Type A)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Butterfly (Type B)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Butterfly (Type C)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Diaphragm (Full Bore)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Diaphragm (Reduced Bore)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Gate (Seat Area = Pipe Area)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Globe", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Sluice (Seat Area)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add Key:="Valve: Swing Check", Item:="Flownex.Components.ValveCheck"
+dict.Add Key:="Valve: Poppet Relief", Item:="Flownex.Components.ValvePressureRelief"
+
 
 'BENDS
-dict.Add Key:="Bend: Circular", Item:="Flownex.Components."
-dict.Add Key:="Bend: Circular Composite Mitre", Item:="Flownex.Components."
-dict.Add Key:="Bend: Circular Mitre", Item:="Flownex.Components."
-dict.Add Key:="Bend: Rectangular (Aspect Ratio 0.5)", Item:="Flownex.Components."
-dict.Add Key:="Bend: Rectangular (Aspect Ratio 1.0)", Item:="Flownex.Components."
-dict.Add Key:="Bend: Rectangular (Aspect Ratio 2.0)", Item:="Flownex.Components."
-dict.Add Key:="Bend: Rectangular Composite Mitre", Item:="Flownex.Components."
-dict.Add Key:="Bend: Rectangular Mitre", Item:="Flownex.Components."
+dict.Add Key:="Bend: Circular", Item:="Flownex.Components.Bend"
+dict.Add Key:="Bend: Circular Composite Mitre", Item:="Flownex.Components.BendMitre"
+dict.Add Key:="Bend: Circular Mitre", Item:="Flownex.Components.BendMitre"
+dict.Add Key:="Bend: Rectangular (Aspect Ratio 0.5)", Item:="Flownex.Components.Bend"
+dict.Add Key:="Bend: Rectangular (Aspect Ratio 1.0)", Item:="Flownex.Components.Bend"
+dict.Add Key:="Bend: Rectangular (Aspect Ratio 2.0)", Item:="Flownex.Components.Bend"
+dict.Add Key:="Bend: Rectangular Composite Mitre", Item:="Flownex.Components.BendMitre"
+dict.Add Key:="Bend: Rectangular Mitre", Item:="Flownex.Components.BendMitre"
 
 'DIAPHRAGM
 dict.Add Key:="Diaphragm: Bursting Disc", Item:="Flownex.Components."
 
 'ORIFICES
-dict.Add Key:="Orifice: Long", Item:="Flownex.Components."
-dict.Add Key:="Orifice: Long: Compressible", Item:="Flownex.Components."
-dict.Add Key:="Orifice: Long: Pall 8700 Filter", Item:="Flownex.Components."
-dict.Add Key:="Orifice: Radiussed", Item:="Flownex.Components."
-dict.Add Key:="Orifice: Sharp-edged (Conical)", Item:="Flownex.Components."
-dict.Add Key:="Orifice: Sharp-edged (Standard Orifice Plate)", Item:="Flownex.Components."
-dict.Add Key:="Orifice: Short: Compressible", Item:="Flownex.Components."
-dict.Add Key:="Orifice: Short: Fixed Throttle (60 L/min at 50 bar)", Item:="Flownex.Components."
-dict.Add Key:="Orifice: Square", Item:="Flownex.Components."
+dict.Add Key:="Orifice: Long", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add Key:="Orifice: Long: Compressible", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add Key:="Orifice: Long: Pall 8700 Filter", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add Key:="Orifice: Radiussed", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add Key:="Orifice: Sharp-edged (Conical)", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add Key:="Orifice: Sharp-edged (Standard Orifice Plate)", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add Key:="Orifice: Short: Compressible", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add Key:="Orifice: Short: Fixed Throttle (60 L/min at 50 bar)", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add Key:="Orifice: Square", Item:="Flownex.Components.BritishStandardOrifice"
 
 'JUNCTIONS
-dict.Add Key:="Junction: T (30°)", Item:="Flownex.Components."
-dict.Add Key:="Junction: T (45°)", Item:="Flownex.Components."
-dict.Add Key:="Junction: T (60°)", Item:="Flownex.Components."
-dict.Add Key:="Junction: T (90°)", Item:="Flownex.Components."
-dict.Add Key:="Junction: Y (A1 + A2 = A3)", Item:="Flownex.Components."
-dict.Add Key:="Junction: Y (A1 = A2 = A3)", Item:="Flownex.Components."
+dict.Add Key:="Junction: T (30°)", Item:="Flownex.Components.Junction"
+dict.Add Key:="Junction: T (45°)", Item:="Flownex.Components.Junction"
+dict.Add Key:="Junction: T (60°)", Item:="Flownex.Components.Junction"
+dict.Add Key:="Junction: T (90°)", Item:="Flownex.Components.Junction"
+dict.Add Key:="Junction: Y (A1 + A2 = A3)", Item:="Flownex.Components.Junction"
+dict.Add Key:="Junction: Y (A1 = A2 = A3)", Item:="Flownex.Components.Junction"
 
 
 'PUMPS
-dict.Add Key:="Jet Pump", Item:="Flownex.Components."
-dict.Add Key:="Pump: Axial Flow", Item:="Flownex.Components."
-dict.Add Key:="Pump: Gear (Fixed Displacement & Variable Speed)", Item:="Flownex.Components."
-dict.Add Key:="Pump: Mixed Flow", Item:="Flownex.Components."
+dict.Add Key:="Jet Pump", Item:="Flownex.Components.JetPump"
+dict.Add Key:="Pump: Axial Flow", Item:="Flownex.Components.Fan"
+dict.Add Key:="Pump: Gear (Fixed Displacement & Variable Speed)", Item:="Flownex.Components.Fan"
+dict.Add Key:="Pump: Mixed Flow", Item:="Flownex.Components.Fan"
 dict.Add Key:="Pump: Piston (Variable Displacement & Speed)", Item:="Flownex.Components."
-dict.Add Key:="Pump: Positive Displacement - Data-based", Item:="Flownex.Components."
-dict.Add Key:="Pump: Radial Flow", Item:="Flownex.Components."
-dict.Add Key:="Pump: Surface Data", Item:="Flownex.Components."
+dict.Add Key:="Pump: Positive Displacement - Data-based", Item:="Flownex.Components.PDPump"
+dict.Add Key:="Pump: Radial Flow", Item:="Flownex.Components.Fan"
+dict.Add Key:="Pump: Surface Data", Item:="Flownex.Components.Fan"
 
 'TRANSITIONS
 dict.Add Key:="Transition: Abrupt", Item:="Flownex.Components."
 dict.Add Key:="Transition: Gradual", Item:="Flownex.Components."
 
 'LOSSES
-dict.Add Key:="Loss: Discrete", Item:="Flownex.Components."
-dict.Add Key:="Cd Discrete Loss", Item:="Flownex.Components."
+dict.Add Key:="Loss: Discrete", Item:="Flownex.Components.SecondaryPressureLoss"
+dict.Add Key:="Cd Discrete Loss", Item:="Flownex.Components.SecondaryPressureLoss"
 
 'HEAT EXCHANGERS
 dict.Add Key:="Heat-Exchanger: Heater-Cooler", Item:="Flownex.Components."
@@ -116,24 +119,24 @@ dict.Add Key:="Reservoir: 2-arm", Item:="Flownex.Components."
 dict.Add Key:="Reservoir: 3-arm", Item:="Flownex.Components."
 dict.Add Key:="Reservoir: Constant Head", Item:="Flownex.Components."
 dict.Add Key:="Reservoir: Expansion Tank or Degas Bottle", Item:="Flownex.Components."
-dict.Add Key:="Reservoir: Finite Area", Item:="Flownex.Components."
-dict.Add Key:="Reservoir: Infinite Area", Item:="Flownex.Components."
-dict.Add Key:="Reservoir: Variable Head", Item:="Flownex.Components."
+dict.Add Key:="Reservoir: Finite Area", Item:="Flownex.Components.OpenContainer"
+dict.Add Key:="Reservoir: Infinite Area", Item:="Flownex.Components.OpenContainer"
+dict.Add Key:="Reservoir: Variable Head", Item:="Flownex.Components.OpenContainer"
 
 'ACCUMULATOR
-dict.Add Key:="Accumulator: Air Vessel", Item:="Flownex.Components."
-dict.Add Key:="Accumulator: Bladder - Fixed Geometry", Item:="Flownex.Components."
-dict.Add Key:="Accumulator: Bladder - Variable Geometry", Item:="Flownex.Components."
-dict.Add Key:="Accumulator: Vented Air Vessel", Item:="Flownex.Components."
-dict.Add Key:="Accumulator: Gas", Item:="Flownex.Components."
-dict.Add Key:="Fixed Volume", Item:="Flownex.Components."
+dict.Add Key:="Accumulator: Air Vessel", Item:="Flownex.Components.Reservoir"
+dict.Add Key:="Accumulator: Bladder - Fixed Geometry", Item:="Flownex.Components.Reservoir"
+dict.Add Key:="Accumulator: Bladder - Variable Geometry", Item:="Flownex.Components.Reservoir"
+dict.Add Key:="Accumulator: Vented Air Vessel", Item:="Flownex.Components.VentedContainer"
+dict.Add Key:="Accumulator: Gas", Item:="Flownex.Components.Reservoir"
+dict.Add Key:="Fixed Volume", Item:="Flownex.Components.Reservoir"
 
 
 If dict.Exists(FMcompName) Then
     'MsgBox FMcompName & " exists and has value " & dict(FMcompName)
     CheckComponent = dict(FMcompName)
 Else
-    MsgBox FMcompName & " does not exist."
+    MsgBox FMcompName & " does not exist or is not declared"
 End If
     
     
