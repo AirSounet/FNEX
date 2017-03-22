@@ -1,0 +1,319 @@
+Sub CreateComponents()
+
+'GET THE NUMBER & TYPE OF COMPONENTS
+ActiveWorkbook.Sheets("connectivity_6").Activate '!!!! ATTENTION NOM DE FEUILLE CONNUE ICI
+Dim comp As New Scripting.Dictionary
+Dim FMcomp As New Scripting.Dictionary
+Dim Flownex_comp As String
+Dim nbComp As Integer ' nombre de composants du réseau FM
+
+Dim i As Integer
+i = 2 'do not take into account the label name
+
+Do While Cells(i, 2).Value <> "" 'loop over the components name
+    'si le composant existe déjà
+    'alors ajouter 1 à sa valeur
+    'sinon ajouter le composant au dico avec comme valeur ini = 1
+    
+    'nb: les composant Pipe rigid et Pipe elastic sont compris comme etant 2 composants différents dans FM
+    'nb suite: dans fnex ils appartiennent à la même catégorie : "flownex.components.Pipe"
+    'Pour connaitre le nombre de champ fnex à créer il faut donc prendre en compte cette différence
+       
+    Flownex_comp = CheckComponent(Cells(i, 2).Value)
+
+    If comp.Exists(Flownex_comp) Then
+        comp(Flownex_comp) = comp(Flownex_comp) + 1
+    Else
+        comp.Add key:=Flownex_comp, Item:=1
+    End If
+    
+    FM_id = Cells(i, 1).Value 'sous FM impossible d'avoir des id identiques
+    FMcomp.Add key:=FM_id, Item:=Cells(i, 2).Value
+    i = i + 1
+Loop
+
+
+'loop over all the components (debug purpose)
+'Dim key As Variant
+'For Each key In comp.Keys
+'   MsgBox (key)
+'Next key
+
+'GET THE NUMBER OF COMPONENTS
+Dim key As Variant
+nbComp = 0
+For Each key In comp.Keys
+   nbComp = nbComp + comp(key)
+Next key
+'MsgBox ("Le réseau FM comprend " & nbComp & " composants")
+
+
+'WRITE THE COMPONENTS USING FLOWNEX FORMAT
+Dim fnexSheetName As String
+Dim row_number As Integer
+Dim coord As Variant 'comp or nodes coordinates
+
+row_number = 0
+
+fnexSheetName = "FM2FNEX"
+
+'Sheets.Add.Name = fnexSheetName
+ActiveWorkbook.Sheets(fnexSheetName).Activate
+
+Cells(1, 1).Value = "COMPONENTS"
+Dim tmp As Integer 'compteur
+Dim tmp2 As Integer 'compteur
+
+tmp = 2
+
+
+For Each Key1 In comp.Keys
+   tmp2 = 1 'initialisation
+   Cells(tmp, 1).Value = Key1
+   Cells(tmp + 1, 1).Value = "X"
+   Cells(tmp + 1, 2).Value = "Y"
+   Cells(tmp + 1, 3).Value = "Identifier"
+   'ecrire les ids
+   For Each key2 In FMcomp.Keys
+    If CheckComponent(FMcomp(key2)) = Key1 Then
+        Cells(tmp + 1 + tmp2, 3).Value = key2
+        coord = GetCoord(key2)
+        ActiveWorkbook.Sheets(fnexSheetName).Activate
+        Cells(tmp + 1 + tmp2, 1).Value = coord(0)
+        Cells(tmp + 1 + tmp2, 2).Value = coord(1)
+        tmp2 = tmp2 + 1
+    End If
+   Next key2
+   
+   tmp = tmp + 1 + comp(Key1) 'reserver espace pour inclure les composants
+   tmp = tmp + 2
+Next Key1
+
+'paramétrage des noeuds
+Cells(tmp, 1).Value = "Flownex.Components.Node"
+Cells(tmp + 1, 1).Value = "X"
+Cells(tmp + 1, 2).Value = "Y"
+Cells(tmp + 1, 3).Value = "Identifier"
+
+
+'WRITE THE NODES USING FLOWNEX FORMAT
+ActiveWorkbook.Sheets("N_Positions").Activate
+i = 1
+Do While Cells(i, 1).Value <> ""
+    ActiveWorkbook.Sheets(fnexSheetName).Cells(tmp + 1 + i, 1) = Cells(i, 2).Value
+    ActiveWorkbook.Sheets(fnexSheetName).Cells(tmp + 1 + i, 2) = Cells(i, 3).Value
+    ActiveWorkbook.Sheets(fnexSheetName).Cells(tmp + 1 + i, 3) = Cells(i, 1).Value
+    i = i + 1
+Loop
+
+'WRITE CONNECTIVITY
+ActiveWorkbook.Sheets(fnexSheetName).Activate
+
+Cells(tmp + i + 2, 1).Value = "LINKS"
+Cells(tmp + i + 3, 1).Value = "Source"
+Cells(tmp + i + 3, 2).Value = "Target"
+
+
+Dim count As Integer
+Dim j As Integer
+
+For j = 1 To nbComp
+
+    lineCount = tmp + 3 + i + j + count
+    
+    ActiveWorkbook.Sheets("connectivity_6").Activate
+    If IsEmpty(Cells(1 + j, 4)) Then
+        'MsgBox ("composant à 1 branche")
+        ActiveWorkbook.Sheets("connectivity_6").Activate
+        ActiveWorkbook.Sheets(fnexSheetName).Cells(lineCount, 1).Value = Cells(1 + j, 3).Value
+        ActiveWorkbook.Sheets(fnexSheetName).Cells(lineCount, 2).Value = Cells(1 + j, 1).Value
+    Else
+        'MsgBox ("composant à 2 branches")
+        ActiveWorkbook.Sheets("connectivity_6").Activate
+        ActiveWorkbook.Sheets(fnexSheetName).Cells(lineCount, 1).Value = Cells(1 + j, 3).Value
+        ActiveWorkbook.Sheets(fnexSheetName).Cells(lineCount, 2).Value = Cells(1 + j, 1).Value
+        
+        ActiveWorkbook.Sheets(fnexSheetName).Cells(lineCount + 1, 1).Value = Cells(1 + j, 1).Value
+        ActiveWorkbook.Sheets(fnexSheetName).Cells(lineCount + 1, 2).Value = Cells(1 + j, 4).Value
+        
+        count = count + 1
+    End If
+
+Next
+
+End Sub
+
+Function GetCoord(Id As Variant) As Variant
+
+Dim pos As Integer
+Dim i As Integer
+Dim arr(2) As Variant 'tableau qui contient le couple (x,y)
+
+i = 1
+pos = InStr(Id, "C")
+
+If pos <> 0 Then
+'c'est un composant
+'ouvrir la feuille des composants
+ActiveWorkbook.Sheets("C_Positions").Activate
+'rechercher l'identifiant en parcourant toutes les lignes
+    Do While Cells(i, 1).Value <> ""
+        If Cells(i, 1).Value = Id Then
+            arr(0) = Cells(i, 2).Value
+            arr(1) = Cells(i, 3).Value
+            Exit Do
+        End If
+        i = i + 1
+    Loop
+    
+Else
+'c'est un noeud
+ActiveWorkbook.Sheets("N_Positions").Activate
+    Do While Cells(i, 1).Value <> ""
+        If Cells(i, 1).Value = Id Then
+            arr(0) = Cells(i, 2).Value
+            arr(1) = Cells(i, 3).Value
+            Exit Do
+        End If
+        i = i + 1
+    Loop
+    
+End If
+
+GetCoord = arr 'retourne les coordonnées
+
+End Function
+
+
+Function CheckComponent(FMcompName As String) As String
+
+Dim dict As New Scripting.Dictionary
+
+'BOUNDARY CONDITIONS
+dict.Add key:="Source: Pressure", Item:="Flownex.Components.BoundaryCondition"
+dict.Add key:="Source: Flow", Item:="Flownex.Components.BoundaryCondition"
+dict.Add key:="Source: Pressure v Flow", Item:="Flownex.Components.BoundaryCondition"
+dict.Add key:="Source: Blank End (Zero Flow)", Item:="Flownex.Components.BoundaryCondition"
+
+'PIPES
+dict.Add key:="Pipe: Cylindrical Rigid", Item:="Flownex.Components.Pipe"
+dict.Add key:="Pipe: Cylindrical Elastic", Item:="Flownex.Components.Pipe"
+dict.Add key:="Pipe: Cylindrical Bubbly", Item:="Flownex.Components.Pipe"
+dict.Add key:="Pipe: Cylindrical Compliant", Item:="Flownex.Components.Pipe"
+dict.Add key:="Pipe: Cylindrical Compliant Gas", Item:="Flownex.Components.Pipe"
+dict.Add key:="Pipe: Cylindrical Elastic Gas", Item:="Flownex.Components.Pipe"
+dict.Add key:="Pipe: Cylindrical Gas", Item:="Flownex.Components.Pipe"
+dict.Add key:="Pipe: Compressible Rigid", Item:="Flownex.Components.Pipe"
+dict.Add key:="Hose: Flexible", Item:="Flownex.Components.Pipe"
+
+'VALVES
+dict.Add key:="Cd Valve", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: ""Y""", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Angle", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Ball", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Butterfly (Blakeborough)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Butterfly (Type A)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Butterfly (Type B)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Butterfly (Type C)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Diaphragm (Full Bore)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Diaphragm (Reduced Bore)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Gate (Seat Area = Pipe Area)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Globe", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Sluice (Seat Area)", Item:="Flownex.Components.ValveAnsiControl"
+dict.Add key:="Valve: Swing Check", Item:="Flownex.Components.ValveCheck"
+dict.Add key:="Valve: Poppet Relief", Item:="Flownex.Components.ValvePressureRelief"
+
+
+'BENDS
+dict.Add key:="Bend: Circular", Item:="Flownex.Components.Bend"
+dict.Add key:="Bend: Circular Composite Mitre", Item:="Flownex.Components.BendMitre"
+dict.Add key:="Bend: Circular Mitre", Item:="Flownex.Components.BendMitre"
+dict.Add key:="Bend: Rectangular (Aspect Ratio 0.5)", Item:="Flownex.Components.Bend"
+dict.Add key:="Bend: Rectangular (Aspect Ratio 1.0)", Item:="Flownex.Components.Bend"
+dict.Add key:="Bend: Rectangular (Aspect Ratio 2.0)", Item:="Flownex.Components.Bend"
+dict.Add key:="Bend: Rectangular Composite Mitre", Item:="Flownex.Components.BendMitre"
+dict.Add key:="Bend: Rectangular Mitre", Item:="Flownex.Components.BendMitre"
+
+'DIAPHRAGM
+dict.Add key:="Diaphragm: Bursting Disc", Item:="Flownex.Components."
+
+'ORIFICES
+dict.Add key:="Orifice: Long", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add key:="Orifice: Long: Compressible", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add key:="Orifice: Long: Pall 8700 Filter", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add key:="Orifice: Radiussed", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add key:="Orifice: Sharp-edged (Conical)", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add key:="Orifice: Sharp-edged (Standard Orifice Plate)", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add key:="Orifice: Short: Compressible", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add key:="Orifice: Short: Fixed Throttle (60 L/min at 50 bar)", Item:="Flownex.Components.BritishStandardOrifice"
+dict.Add key:="Orifice: Square", Item:="Flownex.Components.BritishStandardOrifice"
+
+'JUNCTIONS
+dict.Add key:="Junction: T (30°)", Item:="Flownex.Components.Junction"
+dict.Add key:="Junction: T (45°)", Item:="Flownex.Components.Junction"
+dict.Add key:="Junction: T (60°)", Item:="Flownex.Components.Junction"
+dict.Add key:="Junction: T (90°)", Item:="Flownex.Components.Junction"
+dict.Add key:="Junction: Y (A1 + A2 = A3)", Item:="Flownex.Components.Junction"
+dict.Add key:="Junction: Y (A1 = A2 = A3)", Item:="Flownex.Components.Junction"
+
+
+'PUMPS
+dict.Add key:="Jet Pump", Item:="Flownex.Components.JetPump"
+dict.Add key:="Pump: Axial Flow", Item:="Flownex.Components.Fan"
+dict.Add key:="Pump: Gear (Fixed Displacement & Variable Speed)", Item:="Flownex.Components.Fan"
+dict.Add key:="Pump: Mixed Flow", Item:="Flownex.Components.Fan"
+dict.Add key:="Pump: Piston (Variable Displacement & Speed)", Item:="Flownex.Components."
+dict.Add key:="Pump: Positive Displacement - Data-based", Item:="Flownex.Components.PDPump"
+dict.Add key:="Pump: Radial Flow", Item:="Flownex.Components.Fan"
+dict.Add key:="Pump: Surface Data", Item:="Flownex.Components.Fan"
+
+'TRANSITIONS
+dict.Add key:="Transition: Abrupt", Item:="Flownex.Components."
+dict.Add key:="Transition: Gradual", Item:="Flownex.Components."
+
+'LOSSES
+dict.Add key:="Loss: Discrete", Item:="Flownex.Components.SecondaryPressureLoss"
+dict.Add key:="Cd Discrete Loss", Item:="Flownex.Components.SecondaryPressureLoss"
+
+'HEAT EXCHANGERS
+dict.Add key:="Heat-Exchanger: Heater-Cooler", Item:="Flownex.Components.GeneralEmpiricalRelationship"
+dict.Add key:="Heat-Exchanger: CW Condenser", Item:="Flownex.Components.GeneralEmpiricalRelationship"
+dict.Add key:="Heat-Exchanger: Radiator", Item:="Flownex.Components.GeneralEmpiricalRelationship"
+dict.Add key:="Heat-Exchanger: Thermal", Item:="Flownex.Components.GeneralEmpiricalRelationship"
+dict.Add key:="Heat-Exchanger: Coaxial", Item:="Flownex.Components.GeneralEmpiricalRelationship"
+dict.Add key:="Heat-Exchanger: Cross Flow", Item:="Flownex.Components.GeneralEmpiricalRelationship"
+
+'RESERVOIRS
+dict.Add key:="Fuel Tank: Multi Arm", Item:="Flownex.Components."
+dict.Add key:="Fuel Tank: 12 Arm", Item:="Flownex.Components."
+dict.Add key:="Fuel Tank: 5 Arm", Item:="Flownex.Components."
+dict.Add key:="Fuel Tank: 4 Arm", Item:="Flownex.Components."
+dict.Add key:="Reservoir: Blowdown Tank", Item:="Flownex.Components."
+dict.Add key:="Reservoir: 2-arm", Item:="Flownex.Components."
+dict.Add key:="Reservoir: 3-arm", Item:="Flownex.Components."
+dict.Add key:="Reservoir: Constant Head", Item:="Flownex.Components."
+dict.Add key:="Reservoir: Expansion Tank or Degas Bottle", Item:="Flownex.Components."
+dict.Add key:="Reservoir: Finite Area", Item:="Flownex.Components.OpenContainer"
+dict.Add key:="Reservoir: Infinite Area", Item:="Flownex.Components.OpenContainer"
+dict.Add key:="Reservoir: Variable Head", Item:="Flownex.Components.OpenContainer"
+
+'ACCUMULATOR
+dict.Add key:="Accumulator: Air Vessel", Item:="Flownex.Components.Reservoir"
+dict.Add key:="Accumulator: Bladder - Fixed Geometry", Item:="Flownex.Components.Reservoir"
+dict.Add key:="Accumulator: Bladder - Variable Geometry", Item:="Flownex.Components.Reservoir"
+dict.Add key:="Accumulator: Vented Air Vessel", Item:="Flownex.Components.VentedContainer"
+dict.Add key:="Accumulator: Gas", Item:="Flownex.Components.Reservoir"
+dict.Add key:="Fixed Volume", Item:="Flownex.Components.Reservoir"
+
+
+If dict.Exists(FMcompName) Then
+    'MsgBox FMcompName & " exists and has value " & dict(FMcompName)
+    CheckComponent = dict(FMcompName)
+Else
+    MsgBox FMcompName & " does not exist or is not declared"
+End If
+    
+    
+Set dict = Nothing
+
+End Function
