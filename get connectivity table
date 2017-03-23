@@ -1,104 +1,77 @@
-// Flowmaster external code stub for Macros
-using System;
-using System.Collections;
-using Flowmaster.Interfaces;
-using System.Windows.Forms;
-using Excel = Microsoft.Office.Interop.Excel; 
+Sub Button1_Click()
 
-// Optional: Add extra 'using' directives as required
+'declare Flowmaster objects
+Dim fmapp As Flowmaster_Automation_Gui.Application
+Dim proj As Flowmaster_Automation_Gui.Project
+Dim net As Flowmaster_Automation_Gui.Network
+Dim pipe As Flowmaster_Automation_Gui.Component
+Dim valve As Flowmaster_Automation_Gui.Component
+Dim res As Flowmaster_Automation_Gui.ResultSet
 
-namespace Flowmaster.External
-{
-	public class ExternalCode
-	{
-		int nResultNo;		       
+'declare other objects
+Dim DataSource, DataBase, LoginProject, UserName, UserPswd, ProjectName, NetworkName As Variant
 
-		//The definition for method Macro should not be changed
-		public void Macro( IFM_Application Application, IFM_Database Database, IFM_Project Project, IFM_Network Network, IFM_ResultSet ResultSet )
-		{	 			
-					IFM_Project proj;
-					IFM_Network net;
-					IFM_Component comp;
-					string name;
-					proj = Application.Project("Flowmaster");
-					net = proj.Network("connectivity_1");
-					comp = net.Component(1);
-					name = comp.CustomName;
-			
-					// Number of components in the network
-					int comp_count = net.ComponentIDs.Count;
-					//MessageBox.Show("Le réseau contient " + comp_count.ToString() + " composants.");
-					
-					/**************** GENERATION D'UN CLASSEUR EXCEL**************/
-					Excel.Application xlapp;
-					Excel.Workbook xlwb;
-					Excel.Worksheet xlws ;
-            		object misValue = System.Reflection.Missing.Value; //valeur par défaut
-					xlapp = new Excel.Application();
-					
-					xlwb = xlapp.Workbooks.Add(misValue); // création de 3 feuilles vierges automatiquement
-					
-			
-					//CREATION DE FEUILLES SUPPLEMENTAIRES SI BESOIN
-					if(proj.NetworkNames.Count > 3)
-						xlwb.Worksheets.Add(misValue, misValue,proj.NetworkNames.Count - 3,misValue);
-					
-					
-					for(int c = 0 ; c < proj.NetworkNames.Count ; c++) //proj.NetworkNames.Count
-					{						
-						xlws = (Excel.Worksheet)xlwb.Worksheets.get_Item(c+1);
-						xlws.Name = (string)proj.NetworkNames[c];
-			
-						// MISE EN FORME
-						xlws.Cells[1, 1] = "compID";
-						xlws.Cells[1, 2] = "Name";
-						xlws.Cells[1, 3] = "Arm1";
-						xlws.Cells[1, 4] = "Arm2";
-						xlws.Cells[1, 5] = "Arm3";
-							
-						// ECRITURE DES CONNECTIVITES
-						int nodeID;			
-						ArrayList compIDs = new ArrayList(); // création d'une instance de classe Array
-						net = proj.Network(proj.NetworkNames[c].ToString()); // sélection du réseau via son nom 
-						compIDs = net.ComponentIDs;
-						
-						short armNo = 1; // 0 correspond à Arm1 et 1 correspond à Arm2
-						bool node_found = false; // déclaration + initialisation 
-				
-						//POUR DEBUG ERREUR : "REF D'OBJET NON DEFINIE A UNE INSTANCE D'OBJET"
-						MessageBox.Show((string)proj.NetworkNames[c] + " nbComp = " + compIDs.Count);
-						
-						for (int i = 0 ; i < compIDs.Count ; i++)
-							{
-								int compID = int.Parse(compIDs[i].ToString()); // conversion du type string vers int
-								xlws.Cells[i+2,1] = "C" + compID;
-								//MessageBox.Show(net.Component(compID).CustomName); // debug
-								//MessageBox.Show(compID.ToString()); //debug 
-								xlws.Cells[i+2,2] = net.Component(compID).CustomName;
-								
-								for (short j = 0 ; j < 3 ; j++)		
-								{
-								node_found = net.ComponentAttachedNode(compID,j,out nodeID);
-								//MessageBox.Show("Le noeud " + nodeID.ToString() + " correspond à l'arm" + (armNo+1).ToString() + " du composant " + (i+1).ToString());
-									if(node_found)
-									{
-										xlws.Cells[i+2,3+j] = "N" + nodeID;
-									}
-								}
-							}
-							
-						//ECRITURE DE LA CONNECTIVITE SOUS FORMAT FLOWNEX
-							//xlws.Cells[1, 10] = "Source";
-							//xlws.Cells[1, 11] = "Target";
-						
-							
-					} // fin de boucle for (parcours des feuilles(réseaux FM) du classeur Excel)
-					
-					// SAUVEGARDE ET FERMETURE D'EXCEL
-					xlwb.SaveAs("C:\\Users\\administrateur\\Desktop\\connectivity.xls");
-					xlwb.Close(true,misValue,misValue);
-					xlapp.Quit();
-					
-		}
-	}
-}
+
+'read in db name, path and login
+DataSource = Cells(5, 4).Value
+DataBase = Cells(6, 4).Value
+LoginProject = Cells(7, 4).Value
+UserName = Cells(8, 4).Value
+UserPswd = Cells(9, 4).Value
+ProjectName = Cells(10, 4).Value
+NetworkName = Cells(11, 4).Value
+
+
+'start Flowmaster
+
+Set fmapp = New Flowmaster_Automation_Gui.Application
+
+
+'set the database
+db = fmapp.DatabaseLogin(DataSource, DataBase, LoginProject, UserName, UserPswd)
+
+
+'set the network, project, and components
+Set proj = fmapp.Project(ProjectName)
+Set net = proj.Network(NetworkName)
+
+Dim compIDs As Variant
+Dim i, j As Integer
+Dim nodeID As Integer
+i = 1
+
+Cells(4, 14) = "compID"
+Cells(4, 15) = "Name"
+Cells(4, 16) = "Arm 1"
+Cells(4, 17) = "Arm 2"
+Cells(4, 18) = "Arm 3"
+Cells(4, 19) = "Arm 4"
+
+Range("N4:S4").Font.Bold = True
+
+
+For Each compIDs In net.ComponentIDs
+    
+    Cells(4 + i, 14).Value = "C" & compIDs
+    Set comp = net.Component(compIDs)
+    Cells(4 + i, 15).Value = comp.GetCustomName
+    
+    For j = 1 To 4
+    'net.ComponentAttachedNode
+        nodeID = net.ComponentAttachedNode(compIDs, j)
+        Cells(4 + i, 15 + j) = "N" & nodeID
+    Next
+    
+    i = i + 1
+Next
+
+'MsgBox (net.ComponentIDs.Count)
+    
+Userexit:
+
+'delete Flowmaster objects
+Set fmapp = Nothing
+
+End Sub
+
+
